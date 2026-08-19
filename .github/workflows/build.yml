@@ -9,6 +9,28 @@ permissions:
   contents: read
 
 jobs:
+  build-plugin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: plugins/dsh-plugin-subscriptions
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: corepack enable && corepack prepare pnpm@11.7.0 --activate
+      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm build
+      - run: pnpm test
+      - run: pnpm pack --pack-destination dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dsh-plugin-subscriptions
+          path: plugins/dsh-plugin-subscriptions/dist/*.tgz
+          if-no-files-found: error
+
   # macOS：未签名 universal DMG
   build-macos:
     runs-on: macos-latest

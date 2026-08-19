@@ -50,16 +50,10 @@
   },
   "scripts": {
     "build": "tsc && tsdown",
-    "test": "tsc -p tsconfig.test.json && node --test lib-test/test/",
-    "prepare": "tsdown -c tsdown.prepare.config.ts",
+    "check:manifest": "node -e \"const p=require('./package.json');const bad=Object.keys(p.dependencies||{}).filter(x=>x.startsWith('@deepseek-ai/'));if(bad.length)throw new Error('profile plugin bundles host runtime packages: '+bad.join(', '))\"",
+    "test": "pnpm check:manifest && tsc -p tsconfig.test.json && node --test lib-test/test/",
+    "prepare": "pnpm check:manifest && tsdown -c tsdown.prepare.config.ts",
     "prepublishOnly": "pnpm build && pnpm test"
-  },
-  "dependencies": {
-    "@deepseek-ai/dsh-code-runtime": "0.1.0-rc.7",
-    "@deepseek-ai/dsh-invariants": "0.1.0-rc.7",
-    "@deepseek-ai/dsh-scope": "0.1.0-rc.7",
-    "@deepseek-ai/dsh-system-prompt": "0.1.0-rc.7",
-    "@deepseek-ai/dsh-timeout": "0.1.0-rc.7"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "4.0.1",
